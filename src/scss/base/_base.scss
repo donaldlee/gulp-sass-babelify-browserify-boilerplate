@@ -1,0 +1,96 @@
+// ==========================================================================
+// Base Styles
+// ==========================================================================
+html,
+body {
+  display: block;
+  width: 100%;
+  height: auto;
+  margin: 0 auto;
+  padding: 0;
+  color: $color--primary;
+}
+body {
+  position: relative;
+}
+a {
+  color: inherit;
+  text-decoration: none;
+  cursor: pointer;
+  outline: none;
+}
+button {
+  border: 0;
+  outline: 0;
+  background: inherit;
+  cursor: pointer;
+}
+input {
+  border: 0;
+  outline: 0;
+  background: inherit;
+}
+h1,
+h2,
+h3,
+h4,
+h5,
+p,
+nav,
+header,
+footer,
+.title {
+  display: block;
+  margin: 0 auto;
+  padding: 0;
+  line-height: 1em;
+}
+h1,
+h2,
+h3,
+h4,
+h5,
+h6{
+  color: $color--primary;
+  margin: 0;
+}
+img {
+  width: 100%;
+  height: auto;
+  outline: none;
+}
+
+header ul,
+footer ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  color: white;
+}
+
+header ul a,
+footer ul a {
+  color: white;
+  text-decoration: none;
+}
+
+footer {
+  position: relative;
+  width: 100%;
+  &.sticky {
+    position: fixed;
+    bottom: 0;
+  }
+}
+div.hidden,
+span.hidden {
+  display: none;
+  visibility: hidden;
+}
+
+main {
+  position: relative;
+  display: block;
+  margin: 0 auto;
+  padding: 0;
+}
