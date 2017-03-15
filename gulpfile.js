@@ -109,7 +109,6 @@ const dist = './dist';
       .pipe(handlebars(require('./src/templates/_configs/data.json'), _config))
       .pipe(rename( (path) => {path.extname = ".php";} ))
       .pipe(gulp.dest(dist))
-      .pipe(browserSync.stream());
   });
 
   // COPY ASSETS
