@@ -15,7 +15,7 @@ const sourcemaps    = require('gulp-sourcemaps');
 const sass          = require('gulp-sass');
 const uglify        = require('gulp-uglify');
 const minimist      = require('minimist');
-const buffer        = require('vinyl-buffer')
+const buffer        = require('vinyl-buffer');
 const source        = require('vinyl-source-stream');
 
 // FLAGS
