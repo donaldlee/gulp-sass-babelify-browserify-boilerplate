@@ -51,14 +51,13 @@ gulp.task('watch',[...build],() => {
 
 // SYNC
 gulp.task('sync',['watch'],() => {
-  php.server({ base: dist, port: 8010, keepalive: true}); // run php server
-  setTimeout(() => {
-    browserSync.init({
-      proxy: '127.0.0.1:8010',
-      port: 3000,
-      reloadDelay: 200
-    });
-  },2000)
+  browserSync.init({
+    server: {
+        baseDir: "./dist"
+    },
+    port: 3000,
+    reloadDelay: 200
+  });
 });
 
 /*---------------------------------------------------------------*/
@@ -120,7 +119,7 @@ gulp.task('sass', () => {
       cascade  : false
     }))
     .pipe(rename('style.css'))
-    .pipe(sourcemaps.write('maps'))
+    .pipe(sourcemaps.write('css/maps'))
     .pipe(gulp.dest(dist))
     .pipe(browserSync.stream({match: '**/*.css'}));
 });
@@ -135,7 +134,7 @@ gulp.task('templates', () => {
   }
   return gulp.src('./src/templates/*.handlebars')
     .pipe(handlebars(require('./src/templates/_configs/data.json'), _config))
-    .pipe(rename( (path) => {path.extname = ".php";} ))
+    .pipe(rename( (path) => {path.extname = ".html";} ))
     .pipe(gulp.dest(dist))
 });
 
