@@ -42,33 +42,33 @@ if (args.sync) {
 }
 
 // WATCH
-gulp.task('watch',[...build],() => {
-  gulp.watch('./src/scss/**/*.scss',                       ['sass']);
-  gulp.watch('./src/js/main.js',                           ['browserify']).on('change',browserSync.reload);
+gulp.task('watch', [...build], function() {
+  gulp.watch('./src/scss/**/*.scss', ['sass']);
+  gulp.watch('./src/js/main.js', ['browserify']).on('change',browserSync.reload);
   gulp.watch(['./src/js/vendors.js','./src/js/onload.js'], ['scripts']).on('change',browserSync.reload);
-  gulp.watch('./src/templates/**/*.*',                     ['templates']).on('change',browserSync.reload);
+  gulp.watch('./src/templates/**/*.*', ['templates']).on('change',browserSync.reload);
 });
 
 // SYNC
-gulp.task('sync',['watch'],() => {
+gulp.task('sync', ['watch'], function() {
   php.server({ base: dist, port: 8010, keepalive: true}); // run php server
-  setTimeout(() => {
+  setTimeout(function() {
     browserSync.init({
       proxy: '127.0.0.1:8010',
       port: 3000,
       reloadDelay: 200
     });
-  },2000)
+  }, 2000)
 });
 
 /*---------------------------------------------------------------*/
 
 // COMPILE MAIN.JS (BROWSERIFY)
-gulp.task('browserify', () => {
+gulp.task('browserify', function() {
   return browserify('./src/js/main.js')
     .transform('babelify')
     .bundle()
-    .on('error', (error) => {
+    .on('error', function(error) {
       let args = Array.prototype.slice.call(arguments);
       notify.onError({
         title   : 'Javascript Error',
@@ -87,8 +87,8 @@ gulp.task('browserify', () => {
 });
 
 // COMPILE SCRIPTS
-gulp.task('scripts', () => {
-  return gulp.src(['./src/js/vendors.js','./src/js/onload.js'])
+gulp.task('scripts', function() {
+  return gulp.src(['./src/js/vendors.js', './src/js/onload.js'])
     .pipe(sourcemaps.init())
     .pipe(includeFiles({prefix: '@@', basepath: '@file'}))
     .pipe(gulpif(args.staging || args.production, uglify()))
@@ -97,23 +97,22 @@ gulp.task('scripts', () => {
 });
 
 // COMPILE STYLE.CSS (SASS)
-gulp.task('sass', () => {
+gulp.task('sass', function() {
   return gulp.src('./src/scss/**.scss')
     .pipe(sourcemaps.init())
     .pipe(sass({outputStyle:'compressed'}))
-    .on('error', (error) => {
+    .on('error', function(error) {
       let args = Array.prototype.slice.call(arguments);
       notify.onError({
-        title   : 'Error: ' + error.relativePath,
-        message : error.messageOriginal
+        title   : 'SASS Error',
+        message : error.relativePath
       }).apply(this, args);
       console.log('\n');
-      console.log('File:   ', error.file);
-      console.log('Line:   ', error.line);
-      console.log('Column: ', error.column);
+      console.log('File:', error.file);
+      console.log('Line:', error.line, ' | Column:', error.column);
       console.log('\n');
       console.log(error.formatted);
-      this.emit('end')
+      this.emit('end');
     })
     .pipe(autoprefixer({
       browsers : ['last 5 versions'],
@@ -126,7 +125,7 @@ gulp.task('sass', () => {
 });
 
 // COMPILE TEMPLATES (HANDLEBARS)
-gulp.task('templates', () => {
+gulp.task('templates', function() {
   let _config = {
     ignorePartials : true,
     partials       : {},
@@ -135,12 +134,12 @@ gulp.task('templates', () => {
   }
   return gulp.src('./src/templates/*.handlebars')
     .pipe(handlebars(require('./src/templates/_configs/data.json'), _config))
-    .pipe(rename( (path) => {path.extname = ".php";} ))
+    .pipe(rename( function(path) {path.extname = ".php";} ))
     .pipe(gulp.dest(dist))
 });
 
 // COPY ASSETS
-gulp.task('assets', () => {
+gulp.task('assets', function() {
   return gulp.src('./src/assets/**/*.*')
     .pipe(gulp.dest(dist+'/assets'))
 });
