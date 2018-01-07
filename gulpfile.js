@@ -44,7 +44,7 @@ if (args.sync) {
 // WATCH
 gulp.task('watch', [...build], function() {
   gulp.watch('./src/scss/**/*.scss', ['sass']);
-  gulp.watch('./src/js/main.js', ['browserify']).on('change',browserSync.reload);
+  gulp.watch(['./src/js/main.js', './src/js/components/**/*.js'], ['browserify']).on('change',browserSync.reload);
   gulp.watch(['./src/js/vendors.js','./src/js/onload.js'], ['scripts']).on('change',browserSync.reload);
   gulp.watch('./src/templates/**/*.*', ['templates']).on('change',browserSync.reload);
 });
