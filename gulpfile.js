@@ -3,10 +3,11 @@
 const babelify      = require('babelify');
 const browserify    = require('browserify');
 const browserSync   = require("browser-sync").create();
+const exec          = require('child_process').exec;
 const gulp          = require('gulp');
 const autoprefixer  = require('gulp-autoprefixer');
 const handlebars    = require('gulp-compile-handlebars');
-const php           = require('gulp-connect-php');
+const php           = require('gulp-connect-php7');
 const includeFiles  = require('gulp-file-include');
 const gulpif        = require('gulp-if');
 const notify        = require('gulp-notify');
@@ -49,18 +50,33 @@ gulp.task('watch', [...build], function() {
   gulp.watch('./src/templates/**/*.*', ['templates']).on('change',browserSync.reload);
 });
 
-// SYNC
-gulp.task('sync', ['watch'], function() {
-  php.server({ base: dist, port: 8010, keepalive: true}); // run php server
-  setTimeout(function() {
+// SYNC + WATCH (PHP SERVER)
+gulp.task('sync',['kill-php', 'watch'], function() {
+  // run php server
+  php.server({ base: dist, port: 8010}, function() {
     browserSync.init({
       proxy: '127.0.0.1:8010',
-      port: 3000,
-      reloadDelay: 200
+      port: 3000
     });
-  }, 2000)
+  });
 });
 
+// kills all php processes, prevents error when building server if server exists
+gulp.task('kill-php', function() {
+  exec('pkill php', function (err, stdout, stderr) {
+    console.log(stdout);
+    console.log(stderr);
+  });
+});
+
+// // SYNC + WATCH
+// gulp.task('sync',['watch'], function() {
+//   // serve dist folder on port 4000
+//   browserSync.init({
+//     server: dist,
+//     port: 3000
+//   });
+// });
 /*---------------------------------------------------------------*/
 
 // COMPILE MAIN.JS (BROWSERIFY)
