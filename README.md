@@ -1,10 +1,10 @@
-# BOILERPLATE
-- Gulp
-- PHP
-- Handlebars
-- SCSS
-- ES6/Babel/Browserify
+## BUILD
+compile and inline linked files
+`$ gulp`
 
-### Team
-- Lead Developer: Donald Lee
+## DEV
+compile and watch files
+`$gulp watch`
 
+compile, watch, and serve files on localhost:4000 (hot reloading enabled)
+`gulp sync`
