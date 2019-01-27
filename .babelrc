@@ -4,7 +4,8 @@
       "@babel/preset-env",
       {
         "targets": {
-          "browserslist": "2 versions, > 5%, ie 11"
+          "chrome": "58",
+          "ie": "11"
         }
       }
     ]

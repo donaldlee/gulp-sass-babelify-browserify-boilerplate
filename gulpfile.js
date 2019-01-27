@@ -1,23 +1,25 @@
 'use strict';
 
-const babelify      = require('babelify');
-const browserify    = require('browserify');
-const browserSync   = require("browser-sync").create();
-const exec          = require('child_process').exec;
-const gulp          = require('gulp');
-const autoprefixer  = require('gulp-autoprefixer');
-const handlebars    = require('gulp-compile-handlebars');
-const php           = require('gulp-connect-php7');
-const includeFiles  = require('gulp-file-include');
-const gulpif        = require('gulp-if');
-const notify        = require('gulp-notify');
-const rename        = require('gulp-rename');
-const sourcemaps    = require('gulp-sourcemaps');
-const sass          = require('gulp-sass');
-const uglify        = require('gulp-uglify');
-const minimist      = require('minimist');
-const buffer        = require('vinyl-buffer');
-const source        = require('vinyl-source-stream');
+const babelify = require('babelify');
+const browserify = require('browserify');
+const browserSync = require("browser-sync").create();
+const exec = require('child_process').exec;
+const gulp = require('gulp');
+const autoprefixer = require('gulp-autoprefixer');
+const handlebars = require('gulp-compile-handlebars');
+const php = require('gulp-connect-php7');
+const includeFiles = require('gulp-file-include');
+const gulpif = require('gulp-if');
+const notify = require('gulp-notify');
+const rename = require('gulp-rename');
+const sourcemaps = require('gulp-sourcemaps');
+const sass = require('gulp-sass');
+const uglify = require('gulp-uglify');
+const minimist = require('minimist');
+const buffer = require('vinyl-buffer');
+const source = require('vinyl-source-stream');
+
+const enablePHP = true;
 
 // FLAGS
 const args = minimist(process.argv.slice(2));
@@ -50,33 +52,37 @@ gulp.task('watch', [...build], function() {
   gulp.watch('./src/templates/**/*.*', ['templates']).on('change',browserSync.reload);
 });
 
-// SYNC + WATCH (PHP SERVER)
-gulp.task('sync',['kill-php', 'watch'], function() {
-  // run php server
-  php.server({ base: dist, port: 8010}, function() {
+if (enablePHP) {
+  // SYNC + WATCH (PHP SERVER)
+  gulp.task('sync',['kill-php', 'watch'], function() {
+    // run php server
+    php.server({ base: dist, port: 8010}, function() {
+      browserSync.init({
+        proxy: '127.0.0.1:8010',
+        port: 3000
+      });
+    });
+  });
+
+  // kills all php processes, prevents error when building server if server exists
+  gulp.task('kill-php', function() {
+    exec('pkill php', function (err, stdout, stderr) {
+      console.log(stdout);
+      console.log(stderr);
+    });
+  });
+
+} else {
+  // SYNC + WATCH
+  gulp.task('sync',['watch'], function() {
+    // serve dist folder on port 4000
     browserSync.init({
-      proxy: '127.0.0.1:8010',
+      server: dist,
       port: 3000
     });
   });
-});
+}
 
-// kills all php processes, prevents error when building server if server exists
-gulp.task('kill-php', function() {
-  exec('pkill php', function (err, stdout, stderr) {
-    console.log(stdout);
-    console.log(stderr);
-  });
-});
-
-// // SYNC + WATCH
-// gulp.task('sync',['watch'], function() {
-//   // serve dist folder on port 4000
-//   browserSync.init({
-//     server: dist,
-//     port: 3000
-//   });
-// });
 /*---------------------------------------------------------------*/
 
 // COMPILE MAIN.JS (BROWSERIFY)
@@ -131,8 +137,8 @@ gulp.task('sass', function() {
       this.emit('end');
     })
     .pipe(autoprefixer({
-      browsers : ['last 5 versions'],
-      cascade  : false
+      browsers: ['last 5 versions'],
+      cascade: false
     }))
     .pipe(rename('style.css'))
     .pipe(sourcemaps.write('maps'))
@@ -141,16 +147,17 @@ gulp.task('sass', function() {
 });
 
 // COMPILE TEMPLATES (HANDLEBARS)
+const markupExtension = enablePHP ? 'php' : 'html';
 gulp.task('templates', function() {
   let _config = {
-    ignorePartials : true,
-    partials       : {},
-    batch          : ['./src/templates/components'],
-    helpers        : {}
+    ignorePartials: true,
+    partials: {},
+    batch: ['./src/templates/components'],
+    helpers: {}
   }
   return gulp.src('./src/templates/*.handlebars')
     .pipe(handlebars(require('./src/templates/_configs/data.json'), _config))
-    .pipe(rename( function(path) {path.extname = ".php";} ))
+    .pipe(rename( function(path) {path.extname = "." + markupExtension} ))
     .pipe(gulp.dest(dist))
 });
 

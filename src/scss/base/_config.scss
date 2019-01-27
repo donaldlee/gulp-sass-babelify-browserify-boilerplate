@@ -3,36 +3,35 @@
 // ==========================================================================
 
 // Text
-  $base__font-size : 16px;
+$base__font-size : 1.6rem;
 
 // Font Weights
-  $font-weight--thin       : 100;
-  $font-weight--light      : 300;
-  $font-weight--normal     : 400;
-  $font-weight--semibold   : 600;
-  $font-weight--bold       : 700;
-  $font-weight--ultra-bold : 900;
+$font-weight--thin       : 100;
+$font-weight--light      : 300;
+$font-weight--normal     : 400;
+$font-weight--semibold   : 600;
+$font-weight--bold       : 700;
+$font-weight--ultra-bold : 900;
 
 // Font Stacks
-  $font-family--primary       : "Segoe UI", sans-serif;
-  $font-family--secondary     : "Segoe UI", sans-serif;
+$font-family--primary   : Verdana, Geneva, sans-serif;
+$font-family--secondary : Georgia, Times, "Times New Roman", serif;
 
 // Descriptive Base Colors
-  $white      : #ffffff;
-  $black      : #222222;
-  $blue       : #0098e7;
-  $green      : #74aa2b;
+$white  : #ffffff;
+$black  : #222222;
+$blue   : #0098e7;
+$green  : #74aa2b;
 
-  $color--primary       : $black;
-  $color--secondary     : $blue;
-
+$color--primary   : $black;
+$color--secondary : $blue;
 
 // Responsive Sizes
-  $mobile-only : "(max-width: 767px)";
-  $tablet      : "(min-width: 768px)";
-  $laptop      : "(min-width: 1025px)";
-  $desktop     : "(min-width: 1200px)";
-  $mac         : "(min-width: 1400px)";
+$mobile-only : "(max-width: 767px)";
+$tablet      : "(min-width: 768px)";
+$laptop      : "(min-width: 1025px)";
+$desktop     : "(min-width: 1200px)";
+$mac         : "(min-width: 1400px)";
 // @media #{$mobile-only} {
 //   // code here
 // }
