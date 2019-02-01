@@ -75,7 +75,7 @@ if (enablePHP) {
 } else {
   // SYNC + WATCH
   gulp.task('sync',['watch'], function() {
-    // serve dist folder on port 4000
+    // serve dist folder on port 3000
     browserSync.init({
       server: dist,
       port: 3000
