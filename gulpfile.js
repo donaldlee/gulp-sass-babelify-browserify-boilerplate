@@ -2,7 +2,7 @@
 
 const babelify = require('babelify');
 const browserify = require('browserify');
-const browserSync = require("browser-sync").create();
+const browserSync = require('browser-sync').create();
 const exec = require('child_process').exec;
 const gulp = require('gulp');
 const autoprefixer = require('gulp-autoprefixer');
@@ -27,13 +27,7 @@ const args = minimist(process.argv.slice(2));
 // BUILD FOLDER
 const dist = './dist';
 
-const build = [
-  'browserify',
-  'templates',
-  'sass',
-  'assets',
-  'scripts'
-]
+const build = ['browserify', 'templates', 'sass', 'assets', 'scripts'];
 
 // DEFAULT
 if (args.sync) {
@@ -47,16 +41,22 @@ if (args.sync) {
 // WATCH
 gulp.task('watch', [...build], function() {
   gulp.watch('./src/scss/**/*.scss', ['sass']);
-  gulp.watch(['./src/js/main.js', './src/js/components/**/*.js'], ['browserify']).on('change',browserSync.reload);
-  gulp.watch(['./src/js/vendors.js','./src/js/onload.js'], ['scripts']).on('change',browserSync.reload);
-  gulp.watch('./src/templates/**/*.*', ['templates']).on('change',browserSync.reload);
+  gulp
+    .watch(['./src/js/main.js', './src/js/components/**/*.js'], ['browserify'])
+    .on('change', browserSync.reload);
+  gulp
+    .watch(['./src/js/vendors.js', './src/js/onload.js'], ['scripts'])
+    .on('change', browserSync.reload);
+  gulp
+    .watch('./src/templates/**/*.*', ['templates'])
+    .on('change', browserSync.reload);
 });
 
 if (enablePHP) {
   // SYNC + WATCH (PHP SERVER)
-  gulp.task('sync',['kill-php', 'watch'], function() {
+  gulp.task('sync', ['kill-php', 'watch'], function() {
     // run php server
-    php.server({ base: dist, port: 8010}, function() {
+    php.server({ base: dist, port: 8010 }, function() {
       browserSync.init({
         proxy: '127.0.0.1:8010',
         port: 3000
@@ -66,15 +66,14 @@ if (enablePHP) {
 
   // kills all php processes, prevents error when building server if server exists
   gulp.task('kill-php', function() {
-    exec('pkill php', function (err, stdout, stderr) {
+    exec('pkill php', function(err, stdout, stderr) {
       console.log(stdout);
       console.log(stderr);
     });
   });
-
 } else {
   // SYNC + WATCH
-  gulp.task('sync',['watch'], function() {
+  gulp.task('sync', ['watch'], function() {
     // serve dist folder on port 3000
     browserSync.init({
       server: dist,
@@ -92,43 +91,49 @@ gulp.task('browserify', function() {
     .bundle()
     .on('error', function(error) {
       let args = Array.prototype.slice.call(arguments);
-      notify.onError({
-        title   : 'Javascript Error',
-        message : error.message.split('.js: ')[1]
-      }).apply(this, args);
-      console.log(error)
-      this.emit('end')
+      notify
+        .onError({
+          title: 'Javascript Error',
+          message: error.message.split('.js: ')[1]
+        })
+        .apply(this, args);
+      console.log(error);
+      this.emit('end');
     })
     .pipe(source('main.js'))
     .pipe(buffer())
     .pipe(sourcemaps.init())
-    .pipe(gulpif(args.staging || args.production, uglify()))
+    .pipe(uglify())
     .pipe(sourcemaps.write('maps'))
-    .pipe(gulp.dest(dist+'/js'))
+    .pipe(gulp.dest(dist + '/js'))
     .pipe(browserSync.stream());
 });
 
 // COMPILE SCRIPTS
 gulp.task('scripts', function() {
-  return gulp.src(['./src/js/vendors.js', './src/js/onload.js'])
+  return gulp
+    .src(['./src/js/vendors.js', './src/js/onload.js'])
     .pipe(sourcemaps.init())
-    .pipe(includeFiles({prefix: '@@', basepath: '@file'}))
-    .pipe(gulpif(args.staging || args.production, uglify()))
+    .pipe(includeFiles({ prefix: '@@', basepath: '@file' }))
+    .pipe(uglify())
     .pipe(sourcemaps.write('maps'))
-    .pipe(gulp.dest(dist+'/js'))
+    .pipe(gulp.dest(dist + '/js'));
 });
 
 // COMPILE STYLE.CSS (SASS)
 gulp.task('sass', function() {
-  return gulp.src('./src/scss/**.scss')
+  return gulp
+    .src('./src/scss/**.scss')
     .pipe(sourcemaps.init())
-    .pipe(sass({outputStyle:'compressed'}))
+    .pipe(sass({ outputStyle: 'compressed' }))
     .on('error', function(error) {
       let args = Array.prototype.slice.call(arguments);
-      notify.onError({
-        title   : 'SASS Error',
-        message : error.relativePath
-      }).apply(this, args);
+      notify
+        .onError({
+          title: 'SASS Error',
+          message: error.relativePath
+        })
+        .apply(this, args);
       console.log('\n');
       console.log('File:', error.file);
       console.log('Line:', error.line, ' | Column:', error.column);
@@ -136,14 +141,16 @@ gulp.task('sass', function() {
       console.log(error.formatted);
       this.emit('end');
     })
-    .pipe(autoprefixer({
-      browsers: ['last 5 versions'],
-      cascade: false
-    }))
+    .pipe(
+      autoprefixer({
+        browsers: ['last 5 versions'],
+        cascade: false
+      })
+    )
     .pipe(rename('style.css'))
     .pipe(sourcemaps.write('maps'))
     .pipe(gulp.dest(dist))
-    .pipe(browserSync.stream({match: '**/*.css'}));
+    .pipe(browserSync.stream({ match: '**/*.css' }));
 });
 
 // COMPILE TEMPLATES (HANDLEBARS)
@@ -154,15 +161,19 @@ gulp.task('templates', function() {
     partials: {},
     batch: ['./src/templates/components'],
     helpers: {}
-  }
-  return gulp.src('./src/templates/*.handlebars')
+  };
+  return gulp
+    .src('./src/templates/*.hbs')
     .pipe(handlebars(require('./src/templates/_configs/data.json'), _config))
-    .pipe(rename( function(path) {path.extname = "." + markupExtension} ))
-    .pipe(gulp.dest(dist))
+    .pipe(
+      rename(function(path) {
+        path.extname = '.' + markupExtension;
+      })
+    )
+    .pipe(gulp.dest(dist));
 });
 
 // COPY ASSETS
 gulp.task('assets', function() {
-  return gulp.src('./src/assets/**/*.*')
-    .pipe(gulp.dest(dist+'/assets'))
+  return gulp.src('./src/assets/**/*.*').pipe(gulp.dest(dist + '/assets'));
 });

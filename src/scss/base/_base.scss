@@ -80,20 +80,16 @@ footer {
   }
 }
 
-
 footer {
   position: relative;
   width: 100%;
-  &.sticky {
-    position: fixed;
-    bottom: 0;
-  }
 }
+
 div,
 span {
   &.hidden {
     display: none;
-  visibility: hidden;
+    visibility: hidden;
   }
 }
 
